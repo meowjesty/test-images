@@ -1,0 +1,45 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: udp-echo-10200-deployment
+  labels:
+    app: udp-echo-10200
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: udp-echo-10200
+  template:
+    metadata:
+      labels:
+        app: udp-echo-10200
+    spec:
+      containers:
+        - name: udp-echo-10200
+          image: meowjesty/udp-echo:latest
+          imagePullPolicy: "Always"
+          resources:
+            limits:
+              memory: "256Mi"
+              cpu: "0.1"
+          ports:
+            - containerPort: 10200
+              protocol: UDP
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: udp-echo-10200
+  name: udp-echo-10200
+spec:
+  ports:
+    - port: 10200
+      protocol: UDP
+      targetPort: 10200
+      nodePort: 30040
+  selector:
+    app: udp-echo-10200
+  sessionAffinity: None
+  type: NodePort
+

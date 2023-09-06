@@ -1,0 +1,45 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: udp-logger-deployment
+  labels:
+    app: udp-logger
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: udp-logger
+  template:
+    metadata:
+      labels:
+        app: udp-logger
+    spec:
+      containers:
+        - name: udp-logger
+          image: ghcr.io/metalbear-co/mirrord-node-udp-logger:latest
+          imagePullPolicy: "Always"
+          resources:
+            limits:
+              memory: "256Mi"
+              cpu: "0.1"
+          ports:
+            - containerPort: 31415
+              protocol: UDP
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: udp-logger
+  name: udp-logger
+spec:
+  ports:
+    - port: 31415
+      protocol: UDP
+      targetPort: 31415
+      nodePort: 30050
+  selector:
+    app: udp-logger
+  sessionAffinity: None
+  type: NodePort
+

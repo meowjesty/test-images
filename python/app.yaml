@@ -1,0 +1,44 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sample-python-deployment
+  labels:
+    app: sample-python
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: sample-python
+  template:
+    metadata:
+      labels:
+        app: sample-python
+    spec:
+      containers:
+        - name: sample-python
+          image: ghcr.io/metalbear-co/mirrord-pytest:latest
+          imagePullPolicy: "Always"
+          resources:
+            limits:
+              memory: "256Mi"
+              cpu: "0.1"
+          ports:
+            - containerPort: 80
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: sample-python
+  name: sample-python
+spec:
+  ports:
+    - port: 80
+      protocol: TCP
+      targetPort: 80
+      nodePort: 30031
+  selector:
+    app: sample-python
+  sessionAffinity: None
+  type: NodePort
+
