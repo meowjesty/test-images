@@ -1,0 +1,44 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: http-keep-alive-deployment
+  labels:
+    app: http-keep-alive
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: http-keep-alive
+  template:
+    metadata:
+      labels:
+        app: http-keep-alive
+    spec:
+      containers:
+        - name: http-keep-alive
+          image: meowjesty/http-keep-alive:latest
+          imagePullPolicy: "Always"
+          resources:
+            limits:
+              memory: "256Mi"
+              cpu: "0.1"
+          ports:
+            - containerPort: 80
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: http-keep-alive
+  name: http-keep-alive
+spec:
+  ports:
+    - port: 80
+      protocol: TCP
+      targetPort: 80
+      nodePort: 30046
+  selector:
+    app: http-keep-alive
+  sessionAffinity: None
+  type: NodePort
+
