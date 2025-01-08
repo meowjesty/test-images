@@ -1,6 +1,6 @@
 from flask import Flask
 
-PORT = 80
+PORT = 7777
 
 app = Flask(__name__)
 
